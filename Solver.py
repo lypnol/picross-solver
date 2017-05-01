@@ -16,10 +16,24 @@ class Solver(object):
             raise UnkownSatSolver
 
     @staticmethod
+    def all_solvers():
+        return {
+            PycosatSolver.name(): Solver.PYCOSAT_SOLVER
+        }
+
+    @staticmethod
+    def name():
+        pass
+
+    @staticmethod
     def solve(n, clauses):
         pass
 
 class PycosatSolver(Solver):
+
+    @staticmethod
+    def name():
+        return 'pycosat'
 
     @staticmethod
     @timed("PycosatSolver", "solve")

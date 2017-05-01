@@ -3,18 +3,6 @@ from time import time
 
 SILENT = False
 
-def open_file_write(path):
-    if os.path.isfile(path):
-        i = 1
-        parts = path.split('.')
-        basename = parts[0]
-        ext = parts[1]
-        while os.path.isfile(basename + '-' + str(i) + '.' + ext):
-            i += 1
-        path = basename + '-' + str(i) + '.' + ext
-
-    return open(path, 'w')
-
 def set_silent(silent):
     global SILENT
     SILENT = silent
