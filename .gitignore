@@ -1,0 +1,9 @@
+__pycache__
+*.pyc
+pyvenv.cfg
+bin
+include
+lib
+pip-selfcheck.json
+*.DIMACS
+*.GRID
