@@ -35,7 +35,7 @@ class MyAwesomeModel(Model):
 
 ```
 
-Il faut aussi l'enregistrer dans la fonction `all_models` de la classe `Model`. 
+Il faut aussi l'enregistrer dans les fonction `all_models` et `get` de la classe `Model`. 
 
 ### Sat Solveur
 Pareil que les modélisation, il faut les ajouter dans `Solver.py`
