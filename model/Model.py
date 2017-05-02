@@ -1,6 +1,6 @@
 from utils import timed
-from ModelCoco import ModelCoco
-from BaseModel import ModelAyoub
+from model.ModelCoco import ModelCoco
+from model.ModelAyoub import ModelAyoub
 
 
 class UknownPicrossModel(Exception): pass

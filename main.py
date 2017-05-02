@@ -1,5 +1,5 @@
 from Picross import Picross
-from Model import Model
+from model.Model import Model
 from Solver import Solver
 import utils
 import argparse

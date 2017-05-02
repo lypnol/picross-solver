@@ -1,6 +1,6 @@
 from Dimacs import Dimacs
 from Solver import Solver
-from Model import Model
+from model.Model import Model
 
 
 class InvalidArgument(Exception): pass

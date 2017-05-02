@@ -1,4 +1,4 @@
-from BaseModel import BaseModel
+from model.BaseModel import BaseModel
 from utils import timed
 import re
 
@@ -136,7 +136,7 @@ def get_all_dnfs(picross):
 def dnf_to_cnf(dnf, id):
     """
     prend une dnf sous la forme d'une liste de liste de literaux
-    ie 
+    ie
     :return: meme format, en CNF
     """
     n = len(dnf)
@@ -217,4 +217,3 @@ def output_to_result(output, variable):
             print(variable[int(v[1:])] + " : false")
         else:
             print(variable[int(v)] + " : true")
-
