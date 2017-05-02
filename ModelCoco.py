@@ -15,7 +15,7 @@ class ModelCoco(BaseModel):
 
     @staticmethod
     def get_coords_from_string(str):
-        reg = 'x_(.)_(.)'
+        reg = 'x_([0-9]+)_([0-9]+)'
         m = re.match(reg, str)
         if m:
             i, j = [int(x) for x in m.groups()]
