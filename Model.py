@@ -29,7 +29,7 @@ class Model(object):
         pass
 
     @staticmethod
-    def sat_solution_to_grid(n, n_var, solution):
+    def sat_solution_to_grid(n, n_var, solution, index):
         pass
 
 
@@ -45,49 +45,53 @@ class ModelAyoub(Model):
         n_var = 0
         clauses = []
 
-        for blocks in [line_blocks, col_blocks]:
-            index = []
-            for i in range(n):
-                index.append([])
-                for k in range(n):
-                    index[i].append([])
-                    for j in range(n - k):
-                        n_var += 1
-                        index[i][k].append(n_var)
+        index = []
+        for i in range(n):
+            index.append([])
+            for j in range(n):
+                n_var += 1
+                index[i].append(n_var)
 
-            for i, block in enumerate(blocks):
-                if n in block:
-                    clauses.append([index[i][n-1][0]])
-                else:
-                    for k in block:
-                        clauses.append([-index[i][k-1][0], -index[i][0][n-k]])
-                        clauses.append([-index[i][k-1][n-k], -index[i][0][n-k-1]])
-                        for j in range(1, n-k-1):
-                            clauses.append([-index[i][k-1][j], index[i][0][j-1], -index[i][0][j+k]])
-                            clauses.append([-index[i][k-1][j], index[i][0][j+k], -index[i][0][j-1]])
+        for i, block in enumerate(line_blocks):
+            if n in block:
+                for j in range(n):
+                    clauses.append([index[i][j]])
+            else:
+                for k in block:
+                    clauses.append([-index[i][j] for j in range(k)] + [-index[i][k]])
+                    clauses.append([-index[i][n-1-k]] + [-index[i][n-k+j] for j in range(k)])
+                    for j in range(1, n-k-1):
+                        clauses.append([-index[i][j+u] for u in range(k)] + [-index[i][j+k]])
+                        clauses.append([-index[i][j+u] for u in range(k)] + [-index[i][j-1]])
+                clauses.append([index[i][j] for j in range(n)])
 
-        return n_var, clauses
+        for j, block in enumerate(col_blocks):
+            if n in block:
+                for i in range(n):
+                    clauses.append([index[i][j]])
+            else:
+                for k in block:
+                    clauses.append([-index[i][j] for i in range(k)] + [-index[k][j]])
+                    clauses.append([-index[n-1-k][j]] + [-index[n-k+i][j] for i in range(k)])
+                    for i in range(1, n-k-1):
+                        clauses.append([-index[i+u][j] for u in range(k)] + [-index[i+k][j]])
+                        clauses.append([-index[i+u][j] for u in range(k)] + [-index[i-1][j]])
+                clauses.append([index[i][j] for i in range(n)])
+
+        return n_var, clauses, index
 
     @staticmethod
-    def sat_solution_to_grid(n, n_var, solution):
+    def sat_solution_to_grid(n, n_var, solution, index):
         index = {}
         var = 0
-        for _ in range(2):
-            for i in range(n):
-                for k in range(n):
-                    for j in range(n - k):
-                        var += 1
-                        index[var] = (i, k, j)
+        for i in range(n):
+            for j in range(n):
+                var += 1
+                index[var] = (i, j)
 
         grid = [[0]*n]*n
         for var in solution:
-            if abs(var) <= n_var // 2:
-                i, k, j = index[abs(var)]
-                for u in range(k + 1):
-                    grid[i][j + u] = 0 if var < 0 else 1
-            else:
-                i, k, j = index[abs(var)]
-                for u in range(k + 1):
-                    grid[j + u][i] = 0 if var < 0 else 1
+            i, j = index[abs(var)]
+            grid[i][j] = 0 if var < 0 else 1
 
         return grid

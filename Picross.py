@@ -53,18 +53,18 @@ class Picross(object):
 
     def dimacs(self, model=Model.MODEL_AYOUB):
         if model not in self._dimacs:
-            n, clauses = self.modelize(model)
+            n, clauses, _ = self.modelize(model)
             self._dimacs[model] = Dimacs(n, clauses, self.comments)
         return self._dimacs[model]
 
     def solve(self, model=Model.MODEL_AYOUB, solver=Solver.PYCOSAT_SOLVER):
-        n_var, _ = self.modelize(model)
+        n_var, _, index = self.modelize(model)
         if (model, solver) not in self._solved:
             sat_solution = self.dimacs(model).solve(solver)
             if sat_solution is None:
                 self._solved[(model, solver)] = None
             else:
-                self._solved[(model, solver)] = Model.get(model).sat_solution_to_grid(self.n, n_var, sat_solution)
+                self._solved[(model, solver)] = Model.get(model).sat_solution_to_grid(self.n, n_var, sat_solution, index)
         return self._solved[(model, solver)]
 
     def print_solution(self, model=Model.MODEL_AYOUB, solver=Solver.PYCOSAT_SOLVER):
@@ -115,7 +115,7 @@ class Picross(object):
         f.close()
 
     def save_dimacs(self, model=Model.MODEL_AYOUB, output=None):
-        n_var, clauses = self.modelize(model)
+        n_var, clauses, _ = self.modelize(model)
         output = output or (self.file_path.split('.')[0] + '-' +
                             Model.get(model).name() + '.DIMACS')
         f = open(output, 'w')
