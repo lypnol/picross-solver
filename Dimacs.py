@@ -1,4 +1,4 @@
-from Solver import Solver
+from solver.Solver import Solver
 
 
 class InvalidArgument(Exception): pass

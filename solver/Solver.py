@@ -1,5 +1,4 @@
-import pycosat
-from utils import timed
+from solver.PycosatSolver import PycosatSolver
 
 
 class UnkownSatSolver(Exception): pass
@@ -20,22 +19,3 @@ class Solver(object):
         return {
             PycosatSolver.name(): Solver.PYCOSAT_SOLVER
         }
-
-    @staticmethod
-    def name():
-        pass
-
-    @staticmethod
-    def solve(n, clauses):
-        pass
-
-class PycosatSolver(Solver):
-
-    @staticmethod
-    def name():
-        return 'pycosat'
-
-    @staticmethod
-    @timed("PycosatSolver", "solve")
-    def solve(n, clauses):
-        return pycosat.solve(clauses)

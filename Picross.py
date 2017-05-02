@@ -1,5 +1,5 @@
 from Dimacs import Dimacs
-from Solver import Solver
+from solver.Solver import Solver
 from model.Model import Model
 
 

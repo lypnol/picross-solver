@@ -1,6 +1,6 @@
 from Picross import Picross
 from model.Model import Model
-from Solver import Solver
+from solver.Solver import Solver
 import utils
 import argparse
 
