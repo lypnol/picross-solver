@@ -69,6 +69,9 @@ class Picross(object):
 
     def print_solution(self, model=Model.MODEL_AYOUB, solver=Solver.PYCOSAT_SOLVER):
         grid = self.solve(model, solver)
+        if grid is None:
+            print('UNSATISFIABLE')
+            return
         n = len(grid)
         max_line_block = len(max(self.line_blocks, key=lambda x: len(x)))
         max_col_block = len(max(self.col_blocks, key=lambda x: len(x)))
@@ -103,6 +106,8 @@ class Picross(object):
 
     def save_grid(self, model=Model.MODEL_AYOUB, solver=Solver.PYCOSAT_SOLVER, output=None):
         grid = self.solve(model, solver)
+        if grid is None:
+            return
         output = output or (self.file_path.split('.')[0] + '-' +
                             Model.get(model).name() + '-' +
                             Solver.get(solver).name() + '.GRID')

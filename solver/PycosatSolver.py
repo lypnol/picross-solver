@@ -12,4 +12,6 @@ class PycosatSolver(BaseSolver):
     @staticmethod
     @timed("PycosatSolver", "solve")
     def solve(n, clauses):
-        return pycosat.solve(clauses)
+        res = pycosat.solve(clauses)
+        if res and type(res) == type([]):
+            return res
