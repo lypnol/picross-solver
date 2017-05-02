@@ -58,7 +58,7 @@ class ModelAyoub(BaseModel):
                 var += 1
                 index[var] = (i, j)
 
-        grid = [[0]*n]*n
+        grid = [[0 for _ in range(n)] for __ in range(n)]
         for var in solution:
             i, j = index[abs(var)]
             grid[i][j] = 0 if var < 0 else 1
