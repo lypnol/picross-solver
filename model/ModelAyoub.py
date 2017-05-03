@@ -77,6 +77,7 @@ class ModelAyoub(BaseModel):
         return var, [list(c) for c in clauses], reverse_index
 
     @staticmethod
+    @timed("ModelAyoub", "reverse")
     def sat_solution_to_grid(n, line_blocks, col_blocks, n_var, solution, index):
         line_blocks = [sorted(l) for l in line_blocks]
         col_blocks = [sorted(l) for l in col_blocks]

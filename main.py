@@ -9,10 +9,10 @@ def main():
     parser = argparse.ArgumentParser(description='Picross solver.')
     parser.add_argument('picross', type=str, nargs='+',
                         help='input file in PICROSS format')
-    parser.add_argument('-m', dest='model', type=str,
-                        help='modelization method: ' + ' '.join(Model.all_models().keys()), default='ayoub')
-    parser.add_argument('-s', dest='solver', type=str,
-                        help='sat solver: ' + ' '.join(Solver.all_solvers().keys()), default='pycosat')
+    parser.add_argument('-m', dest='model', type=str, nargs='*',
+                        help='modelization method: ' + ' '.join(Model.all_models().keys()), default=['ayoub'])
+    parser.add_argument('-s', dest='solver', type=str, nargs='*',
+                        help='sat solver: ' + ' '.join(Solver.all_solvers().keys()), default=['pycosat'])
     parser.add_argument('-o', dest='output', type=str,
                         help='destination GRID file', default=None)
     parser.add_argument('--dimacs', dest='dimacs', action='store_true',
@@ -29,10 +29,12 @@ def main():
 
     for path in args.picross:
         picross = Picross(path)
-        if args.dimacs:
-            picross.save_dimacs(model=models[args.model])
-        picross.print_solution(model=models[args.model], solver=solvers[args.solver])
-        picross.save_grid(model=models[args.model], solver=solvers[args.solver], output=args.output)
+        for model in args.model:
+            if args.dimacs:
+                picross.save_dimacs(model=models[model])
+            for solver in args.solver:
+                picross.print_solution(model=models[model], solver=solvers[solver])
+                picross.save_grid(model=models[model], solver=solvers[solver], output=args.output)
 
 if __name__ == '__main__':
     main()
