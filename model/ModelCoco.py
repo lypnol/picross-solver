@@ -23,7 +23,7 @@ class ModelCoco(BaseModel):
 
     @staticmethod
     @timed("ModelCoco", "sat_solution_to_grid")
-    def sat_solution_to_grid(n, n_var, solution, index):
+    def sat_solution_to_grid(n, line_blocks, col_blocks, n_var, solution, index):
 
         grille_sol = [[0 for _ in range(n)] for _2 in range(n)]
 
