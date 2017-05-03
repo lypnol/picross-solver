@@ -1,6 +1,7 @@
 from Dimacs import Dimacs
 from solver.Solver import Solver
 from model.Model import Model
+from utils import print_colors
 
 
 class InvalidArgument(Exception): pass
@@ -70,7 +71,7 @@ class Picross(object):
     def print_solution(self, model=Model.MODEL_AYOUB, solver=Solver.PYCOSAT_SOLVER):
         grid = self.solve(model, solver)
         if grid is None:
-            print('UNSATISFIABLE')
+            print_colors('{RED}UNSATISFIABLE{ENDC}')
             return
         n = len(grid)
         max_line_block = len(max(self.line_blocks, key=lambda x: len(x)))
