@@ -10,7 +10,7 @@ def main():
     parser.add_argument('picross', type=str, nargs='+',
                         help='input file in PICROSS format')
     parser.add_argument('-m', dest='model', type=str, nargs='*',
-                        help='modelization method: ' + ' '.join(Model.all_models().keys()), default=['ayoub'])
+                        help='modelization method: ' + ' '.join(Model.all_models().keys()), default=['ikj'])
     parser.add_argument('-s', dest='solver', type=str, nargs='*',
                         help='sat solver: ' + ' '.join(Solver.all_solvers().keys()), default=['pycosat'])
     parser.add_argument('-o', dest='output', type=str,

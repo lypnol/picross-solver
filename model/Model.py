@@ -1,27 +1,27 @@
 from utils import timed
-from model.ModelCoco import ModelCoco
-from model.ModelAyoub import ModelAyoub
+from model.ModelSpots import ModelSpots
+from model.ModelIKJ import ModelIKJ
 
 
 class UknownPicrossModel(Exception): pass
 
 class Model:
 
-    MODEL_AYOUB = 0
-    MODEL_COCO = 1
+    MODEL_IKJ = 0
+    MODEL_SPOTS = 1
 
     @staticmethod
     def get(model):
-        if model == Model.MODEL_AYOUB:
-            return ModelAyoub
-        elif model == Model.MODEL_COCO:
-            return ModelCoco
+        if model == Model.MODEL_IKJ:
+            return ModelIKJ
+        elif model == Model.MODEL_SPOTS:
+            return ModelSpots
         else:
             raise UknownPicrossModel
 
     @staticmethod
     def all_models():
         return {
-            ModelAyoub.name(): Model.MODEL_AYOUB,
-            ModelCoco.name(): Model.MODEL_COCO
+            ModelIKJ.name(): Model.MODEL_IKJ,
+            ModelSpots.name(): Model.MODEL_SPOTS
         }

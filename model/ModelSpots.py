@@ -2,14 +2,14 @@ from model.BaseModel import BaseModel
 from utils import timed
 import re
 
-class ModelCoco(BaseModel):
+class ModelSpots(BaseModel):
 
     @staticmethod
     def name():
-        return 'coco'
+        return 'spots'
 
     @staticmethod
-    @timed("ModelCoco", "modelize")
+    @timed("ModelSpots", "modelize")
     def modelize(n, line_blocks, col_blocks):
         return picross_to_dimacs((n, line_blocks, col_blocks))
 
@@ -22,7 +22,7 @@ class ModelCoco(BaseModel):
             return i, j
 
     @staticmethod
-    @timed("ModelCoco", "sat_solution_to_grid")
+    @timed("ModelSpots", "sat_solution_to_grid")
     def sat_solution_to_grid(n, line_blocks, col_blocks, n_var, solution, index):
 
         grille_sol = [[0 for _ in range(n)] for _2 in range(n)]
@@ -30,7 +30,7 @@ class ModelCoco(BaseModel):
         for v in solution:
             var_name = index[abs(v)]
             if 'x' in var_name:
-                i, j = ModelCoco.get_coords_from_string(var_name)
+                i, j = ModelSpots.get_coords_from_string(var_name)
                 grille_sol[i][j] = 1 if v > 0 else 0
         return grille_sol
 

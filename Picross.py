@@ -46,19 +46,19 @@ class Picross(object):
         self._dimacs = {}
         self._solved = {}
 
-    def modelize(self, model=Model.MODEL_AYOUB):
+    def modelize(self, model=Model.MODEL_IKJ):
         if model not in self._modelized:
             self._modelized[model] = Model.get(model).modelize(self.n, self.line_blocks, self.col_blocks)
 
         return self._modelized[model]
 
-    def dimacs(self, model=Model.MODEL_AYOUB):
+    def dimacs(self, model=Model.MODEL_IKJ):
         if model not in self._dimacs:
             n, clauses, _ = self.modelize(model)
             self._dimacs[model] = Dimacs(n, clauses, self.comments)
         return self._dimacs[model]
 
-    def solve(self, model=Model.MODEL_AYOUB, solver=Solver.PYCOSAT_SOLVER):
+    def solve(self, model=Model.MODEL_IKJ, solver=Solver.PYCOSAT_SOLVER):
         n_var, _, index = self.modelize(model)
         if (model, solver) not in self._solved:
             sat_solution = self.dimacs(model).solve(solver)
@@ -68,7 +68,7 @@ class Picross(object):
                 self._solved[(model, solver)] = Model.get(model).sat_solution_to_grid(self.n, self.line_blocks, self.col_blocks, n_var, sat_solution, index)
         return self._solved[(model, solver)]
 
-    def print_solution(self, model=Model.MODEL_AYOUB, solver=Solver.PYCOSAT_SOLVER):
+    def print_solution(self, model=Model.MODEL_IKJ, solver=Solver.PYCOSAT_SOLVER):
         grid = self.solve(model, solver)
         if grid is None:
             print_colors('{RED}UNSATISFIABLE{ENDC}')
@@ -111,7 +111,7 @@ class Picross(object):
             line.append(''.join('#' if grid[i][j] else ' ' for j in range(n)))
             print(''.join(line))
 
-    def save_grid(self, model=Model.MODEL_AYOUB, solver=Solver.PYCOSAT_SOLVER, output=None):
+    def save_grid(self, model=Model.MODEL_IKJ, solver=Solver.PYCOSAT_SOLVER, output=None):
         grid = self.solve(model, solver)
         if grid is None:
             return
@@ -126,7 +126,7 @@ class Picross(object):
             f.write('{} 0\n'.format(' '.join(['#' if c else ' ' for c in row])))
         f.close()
 
-    def save_dimacs(self, model=Model.MODEL_AYOUB, output=None):
+    def save_dimacs(self, model=Model.MODEL_IKJ, output=None):
         n_var, clauses, _ = self.modelize(model)
         output = output or (self.file_path.split('.')[0] + '-' +
                             Model.get(model).name() + '.DIMACS')
