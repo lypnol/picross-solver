@@ -1,7 +1,7 @@
 from Dimacs import Dimacs
 from solver.Solver import Solver
 from model.Model import Model
-from utils import print_colors
+from utils import print_colors, bcolors
 
 
 class InvalidArgument(Exception): pass
@@ -46,29 +46,29 @@ class Picross(object):
         self._dimacs = {}
         self._solved = {}
 
-    def modelize(self, model=Model.MODEL_AYOUB):
+    def modelize(self, model=Model.MODEL_IKJ):
         if model not in self._modelized:
             self._modelized[model] = Model.get(model).modelize(self.n, self.line_blocks, self.col_blocks)
 
         return self._modelized[model]
 
-    def dimacs(self, model=Model.MODEL_AYOUB):
+    def dimacs(self, model=Model.MODEL_IKJ):
         if model not in self._dimacs:
             n, clauses, _ = self.modelize(model)
             self._dimacs[model] = Dimacs(n, clauses, self.comments)
         return self._dimacs[model]
 
-    def solve(self, model=Model.MODEL_AYOUB, solver=Solver.PYCOSAT_SOLVER):
+    def solve(self, model=Model.MODEL_IKJ, solver=Solver.PYCOSAT_SOLVER):
         n_var, _, index = self.modelize(model)
         if (model, solver) not in self._solved:
             sat_solution = self.dimacs(model).solve(solver)
             if sat_solution is None:
                 self._solved[(model, solver)] = None
             else:
-                self._solved[(model, solver)] = Model.get(model).sat_solution_to_grid(self.n, n_var, sat_solution, index)
+                self._solved[(model, solver)] = Model.get(model).sat_solution_to_grid(self.n, self.line_blocks, self.col_blocks, n_var, sat_solution, index)
         return self._solved[(model, solver)]
 
-    def print_solution(self, model=Model.MODEL_AYOUB, solver=Solver.PYCOSAT_SOLVER):
+    def print_solution(self, model=Model.MODEL_IKJ, solver=Solver.PYCOSAT_SOLVER):
         grid = self.solve(model, solver)
         if grid is None:
             print_colors('{RED}UNSATISFIABLE{ENDC}')
@@ -83,7 +83,10 @@ class Picross(object):
             line.append('|')
             for j in range(n):
                 if max_col_block - i <= len(self.col_blocks[j]):
-                    line.append(str(self.col_blocks[j][max_col_block - i - 1]))
+                    s = str(self.col_blocks[j][max_col_block - i - 1])
+                    if len(s) > 1:
+                        s = ('{BOLD}'+s[0]+'{ENDC}').format(BOLD=bcolors.BOLD, ENDC=bcolors.ENDC)
+                    line.append(s)
                 else:
                     line.append(' ')
             print(''.join(line))
@@ -98,14 +101,17 @@ class Picross(object):
             line = []
             for j in range(max_line_block):
                 if max_line_block - j <= len(self.line_blocks[i]):
-                    line.append(str(self.line_blocks[i][max_line_block - j - 1]))
+                    s = str(self.line_blocks[i][max_line_block - j - 1])
+                    if len(s) > 1:
+                        s = ('{YELLOW}'+s[0]+'{ENDC}').format(YELLOW=bcolors.WARNING, ENDC=bcolors.ENDC)
+                    line.append(s)
                 else:
                     line.append(' ')
             line.append('|')
             line.append(''.join('#' if grid[i][j] else ' ' for j in range(n)))
             print(''.join(line))
 
-    def save_grid(self, model=Model.MODEL_AYOUB, solver=Solver.PYCOSAT_SOLVER, output=None):
+    def save_grid(self, model=Model.MODEL_IKJ, solver=Solver.PYCOSAT_SOLVER, output=None):
         grid = self.solve(model, solver)
         if grid is None:
             return
@@ -120,7 +126,7 @@ class Picross(object):
             f.write('{} 0\n'.format(' '.join(['#' if c else ' ' for c in row])))
         f.close()
 
-    def save_dimacs(self, model=Model.MODEL_AYOUB, output=None):
+    def save_dimacs(self, model=Model.MODEL_IKJ, output=None):
         n_var, clauses, _ = self.modelize(model)
         output = output or (self.file_path.split('.')[0] + '-' +
                             Model.get(model).name() + '.DIMACS')

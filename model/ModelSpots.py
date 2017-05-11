@@ -2,21 +2,20 @@ from model.BaseModel import BaseModel
 from utils import timed
 import re
 
-class ModelCoco(BaseModel):
+class ModelSpots(BaseModel):
 
     @staticmethod
     def name():
-        return 'coco'
+        return 'spots'
 
     @staticmethod
-    @timed("ModelCoco", "modelize")
+    @timed("ModelSpots", "modelize")
     def modelize(n, line_blocks, col_blocks):
         return picross_to_dimacs((n, line_blocks, col_blocks))
 
     @staticmethod
-    @timed("ModelCoco", "sat_solution_to_grid")
-    def sat_solution_to_grid(n, n_var, solution, index):
-
+    @timed("ModelSpots", "sat_solution_to_grid")
+    def sat_solution_to_grid(n, line_blocks, col_blocks, n_var, solution, index):
         grille_sol = [[0 for _ in range(n)] for _2 in range(n)]
 
         for v in solution:
