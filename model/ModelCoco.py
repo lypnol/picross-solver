@@ -14,14 +14,6 @@ class ModelCoco(BaseModel):
         return picross_to_dimacs((n, line_blocks, col_blocks))
 
     @staticmethod
-    def get_coords_from_string(str):
-        reg = 'x_([0-9]+)_([0-9]+)'
-        m = re.match(reg, str)
-        if m:
-            i, j = [int(x) for x in m.groups()]
-            return i, j
-
-    @staticmethod
     @timed("ModelCoco", "sat_solution_to_grid")
     def sat_solution_to_grid(n, n_var, solution, index):
 
@@ -30,7 +22,7 @@ class ModelCoco(BaseModel):
         for v in solution:
             var_name = index[abs(v)]
             if 'x' in var_name:
-                i, j = ModelCoco.get_coords_from_string(var_name)
+                i, j = get_coords_from_string(var_name)
                 grille_sol[i][j] = 1 if v > 0 else 0
         return grille_sol
 
@@ -68,22 +60,13 @@ assert (Literal('x')) != Literal('x', False)
 assert (Literal('x')) != Literal('y')
 assert (Literal('x') == Literal('x', False).inverted())
 
-class PicrossLiteral(Literal):
 
-    def __init__(self, i, j, truth):
-        self.i = i
-        self.j = j
-        self.truth = truth
+def PicrossLiteral(i, j, truth):
+    return Literal("x_{i}_{j}".format(
+            i=i,
+            j=j
+        ), truth)
 
-    @property
-    def name(self):
-        return "x_{i}_{j}".format(
-            i=self.i,
-            j=self.j
-        )
-
-    def inverted(self):
-        return PicrossLiteral(self.i, self.j, not self.truth)
 
 def get_all_possible_rec(current, restants, size):
     if restants == []:
@@ -135,12 +118,18 @@ def get_all_dnfs(picross):
 
 def dnf_to_cnf(dnf, id):
     """
-    prend une dnf sous la forme d'une liste de liste de literaux
+    prend une dnf sous la forme d'une liste de liste de literaux : Or(And(x1, x2), And(x2, x5))
     ie
     :return: meme format, en CNF
     """
     n = len(dnf)
     l = Literal(id, True)
+
+    # cas particulier
+    if len(dnf) == 1:
+
+        and_clause = dnf[0]
+        return And([Or([x]) for x in and_clause])
 
     # variables pour chaque ligne / colonne
     new_variables = [Literal("{id}_{i}".format(id=id, i=i)) for i in range(n)]
@@ -207,13 +196,9 @@ def cnf_to_dimacs(cnf):
 def picross_to_dimacs(picross):
     return cnf_to_dimacs(flatten_cnfs(get_all_cnfs(get_all_dnfs(picross))))
 
-def output_to_result(output, variable):
-    vars = output.split()
-
-    for v in vars:
-        if v == "0":
-            break
-        if v.startswith("-"):
-            print(variable[int(v[1:])] + " : false")
-        else:
-            print(variable[int(v)] + " : true")
+def get_coords_from_string(str):
+    reg = 'x_([0-9]+)_([0-9]+)'
+    m = re.match(reg, str)
+    if m:
+        i, j = [int(x) for x in m.groups()]
+        return i, j
