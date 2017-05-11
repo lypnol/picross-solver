@@ -12,8 +12,8 @@
     - Solver.py : contient la liste des solveurs
 - model/ : Contient le code lié à la modélisation
     - BaseModel : interface à implémenter pour écrire une modélisation du problème
-    - ModelAyoub : modèle qui utilise les blocs de cases consécutives.
-    - ModelCoco : modèle qui n'utilise pas de blocs (juste les cases, et des variables suplémentaires)
+    - ModelSpots : modèle qui n'utilise pas de blocs (juste les cases, et des variables suplémentaires)
+    - ModelIKJ : modèle qui utilise les blocs de cases consécutives.
     - Model.py : liste des modèles
 - requirements.txt : librairies python nécessaires
 - utils.py : diverses fonctions utiles (notamment pour mesurer le temps d'execution des fontions)
