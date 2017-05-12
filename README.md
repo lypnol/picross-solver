@@ -23,8 +23,14 @@
 
 Il faut installer les packages dans `requirements.txt` et lancer sur le fichier de test:
 ```
-python3 main.py picross_files/test.PICROSS
+python3 main.py picross_files/test.PICROSS [-m spots / ikj]
 ```
+
+
+## Champion
+
+Pour le moment, le champion est le no-caption-25.picross, qui est resolu en une quinzaine de minutes
+
 
 ## Ajouter une modélisation ou un sat solveur
 
