@@ -15,9 +15,6 @@ class ModelIKJ(BaseModel):
         var = 0
         clauses = set()
 
-        line_blocks = [sorted(l) for l in line_blocks]
-        col_blocks = [sorted(l) for l in col_blocks]
-
         reverse_index = {}
         col_index = []
         line_index = []
@@ -60,17 +57,22 @@ class ModelIKJ(BaseModel):
                         for k1, w in enumerate(blocks[i]):
                             if k1 != k:
                                 for h in range(n-w+1):
-                                    b = set(x for x in range(j, j+v))
-                                    b1 = set(y for y in range(max(0, h-1), min(n, h+w+1)))
-                                    if b & b1:
+                                    a, b = j, j+v-1
+                                    x, y = max(0, h-1), min(n, h+w+1)-1
+                                    if (max(a, x) <= min(b, y)):
                                         clauses.add((-index[i][k][j], -index[i][k1][h]))
+
+                        if k > 0:
+                            k1 = k-1
+                            w = blocks[i][k1]
+                            for h in range(j+v, n-w+1):
+                                clauses.add((-index[i][k][j], -index[i][k1][h]))
 
                         for t in range(j, j+v):
                             c = [-index[i][k][j]]
                             for l, w in  enumerate(other_blocks[t]):
                                 for h in range(n-w+1):
-                                    b = set(x for x in range(h, h+w))
-                                    if i in b:
+                                    if h <= i <= h+w-1:
                                         c.append(other_index[t][l][h])
                             clauses.add(tuple(c))
 
@@ -79,8 +81,6 @@ class ModelIKJ(BaseModel):
     @staticmethod
     @timed("ModelIKJ", "reverse")
     def sat_solution_to_grid(n, line_blocks, col_blocks, n_var, solution, index):
-        line_blocks = [sorted(l) for l in line_blocks]
-        col_blocks = [sorted(l) for l in col_blocks]
         grid = [[0 for _ in range(n)] for __ in range(n)]
         for var in solution:
             if var > 0:
