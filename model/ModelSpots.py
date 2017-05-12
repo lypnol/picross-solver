@@ -17,12 +17,12 @@ class ModelSpots(BaseModel):
     @timed("ModelSpots", "sat_solution_to_grid")
     def sat_solution_to_grid(n, line_blocks, col_blocks, n_var, solution, index):
         grille_sol = [[0 for _ in range(n)] for _2 in range(n)]
-
         for v in solution:
             var_name = index[abs(v)]
-            if 'x' in var_name:
-                i, j = get_coords_from_string(var_name)
-                grille_sol[i][j] = 1 if v > 0 else 0
+            if var_name is not None:
+                if 'x' in var_name:
+                    i, j = get_coords_from_string(var_name)
+                    grille_sol[i][j] = 1 if v > 0 else 0
         return grille_sol
 
 class And(list):
@@ -113,6 +113,9 @@ def get_all_dnfs(picross):
     for i, c in enumerate(columns):
         formulas["c" + str(i)] = convert_to_dnf(get_all_possible(c, size), column=i)
 
+    print("******************dnfs done*******************")
+
+    print(len(formulas))
     return formulas
 
 def dnf_to_cnf(dnf, id):
@@ -126,53 +129,60 @@ def dnf_to_cnf(dnf, id):
 
     # cas particulier
     if len(dnf) == 1:
-
         and_clause = dnf[0]
         return And([Or([x]) for x in and_clause])
 
+
     # variables pour chaque ligne / colonne
-    new_variables = [Literal("{id}_{i}".format(id=id, i=i)) for i in range(n)]
+    new_variables = [
+        Literal("{id}_{i}".format(id=id, i=i)) if len(dnf[i]) > 1 
+        else dnf[i][0]
+        for i in range(n)]
+
 
     result = And([])
-    # first global literal
-    result.append(Or([l]))
 
-    # l => l1 v l1 v ...
-    result.append(Or([l.inverted()] + new_variables))
-    # l <= l1 v l2 ... == (l v -l1) ^ (l v -l2) ...
-    for v in new_variables:
-        result.append(Or([l, v.inverted()]))
-
+    # l1 v l1 v ...
+    result.append(Or(new_variables))
+    
     # specific clauses
     for i in range(n):
         l_i = new_variables[i]
-        # l_i <=> dnf[i]
+        # l_i <=> dnf[i] <=> x1 ^ x2 ^ x3
         # revient à
         # l_i => dnf[i] == -l_i v (x1 ^ x2 ^ ..)
-        result.append(Or([l_i] + [x.inverted() for x in dnf[i]]))
-        for v in dnf[i]:
-            result.append(Or([l_i.inverted(), v]))
+        if len(dnf[i]) > 1:
+            result.append(Or([l_i] + [x.inverted() for x in dnf[i]]))
+            for v in dnf[i]:
+                result.append(Or([l_i.inverted(), v]))
+        else:
+            result.append(Or([x for x in dnf[i][0]]))
     return result
 
 def get_all_cnfs(dnfs):
     cnfs = {}
-    for line in dnfs:
+    for i, line in enumerate(dnfs):
         cnfs[line] = dnf_to_cnf(dnfs[line], line)
     return cnfs
 
 def flatten_cnfs(cnfs):
+    print("**** flattening cnf*********")
     result = And([])
     for key in cnfs:
         result.extend(cnfs[key])
+    print("done flattening cnfs")
     return result
 
 def cnf_to_dimacs(cnf):
+    print("converting to dimacs")
     # list variables
-    variables = []
-    for clause in cnf:
+    variables = set()
+    for i, clause in enumerate(cnf):
         for lit in clause:
             if lit.name not in variables:
-                variables.append(lit.name)
+                variables.add(lit.name)
+    print("done enumerating variables")
+    variables = list(variables)
     # put ids in dict
     variables_dict = {}
     for i, v in enumerate(variables):
@@ -180,15 +190,15 @@ def cnf_to_dimacs(cnf):
 
     n_var = len(variables)
     clauses_dimacs = []
-
     # to dimacs
-    dimacs = "p cnf {n_var} {n_clause}\n".format(n_var=len(variables), n_clause=len(cnf))
+    # dimacs = "p cnf {n_var} {n_clause}\n".format(n_var=len(variables), n_clause=len(cnf))
     for clause in cnf:
         line_dimacs = []
         for lit in clause:
             var = (1 if lit.truth else -1) * variables_dict[lit.name]
             line_dimacs.append(var)
         clauses_dimacs.append(line_dimacs)
+    print("done converting")
     return n_var, clauses_dimacs, [None] + variables
 
 

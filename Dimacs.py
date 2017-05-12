@@ -44,3 +44,10 @@ class Dimacs(object):
     def solve(self, solver=Solver.PYCOSAT_SOLVER):
         self.solved[solver] = Solver.get(solver).solve(self.n, self.clauses)
         return self.solved[solver]
+
+    @staticmethod
+    def write(n, clauses, f):
+        f.write('p cnf {} {}\n'.format(n, len(clauses)))
+        for c in clauses:
+            f.write('{} 0\n'.format(' '.join(map(str, c))))
+
