@@ -23,7 +23,7 @@
 
 Il faut installer les packages dans `requirements.txt` et lancer sur le fichier de test:
 ```
-python3 main.py picross_files/test.PICROSS [-m spots / ikj]
+python3 main.py picross_files/test.PICROSS [-m spots|ikj]
 ```
 
 
