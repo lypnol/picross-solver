@@ -29,7 +29,7 @@ python3 main.py picross_files/test.PICROSS [-m spots / ikj]
 
 ## Champion
 
-Pour le moment, le champion est le no-caption-25.picross, qui est resolu en une quinzaine de minutes
+Pour le moment, le champion est le `lost-78.picross`, qui est modélisé et résolu en 2 minutes 30 secondes.
 
 
 ## Ajouter une modélisation ou un sat solveur
