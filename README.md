@@ -21,16 +21,22 @@
 
 ## Comment ça marche
 
-Il faut installer les packages dans `requirements.txt` et lancer sur le fichier de test:
+Il faut installer les packages dans `requirements.txt`.
+Ensuite, pour lancer une résolution, il faut lancer la commande suivante (ici sur un fichier picross de test) :
+
 ```
 python3 main.py picross_files/test.PICROSS [-m spots / ikj]
 ```
 
+L'option '-m spots / ikj' est pour choisir quelle modélisation sera utilisée pour résoudre le problème.
+Par défaut, la modélisation ikj (qui a de meilleures performances) est utilisée.
+
+Le résultat sera alors enregistré dans un fichier, a coté du fichier initial, sous le format .GRID
+
 
 ## Champion
 
-Pour le moment, le champion est le no-caption-25.picross, qui est resolu en une quinzaine de minutes
-
+Pour le moment, le champion est le lost-78-ikj-pycosat.GRID, qui est resolu en 2 minutes.
 
 ## Ajouter une modélisation ou un sat solveur
 
@@ -68,3 +74,4 @@ Il faut aussi l'enregistrer dans les fonction `all_models` et `get` dans `Model.
 
 ### Sat Solveur
 Pareil que les modélisation, il faut les ajouter dans `Solver.py`
+Nous n'avons pas réalisé de SAT solver.
